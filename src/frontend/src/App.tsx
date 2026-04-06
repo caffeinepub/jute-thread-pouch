@@ -161,6 +161,7 @@ export default function App() {
   const [selectedStyle, setSelectedStyle] = useState("drawstring");
   const [customName, setCustomName] = useState("");
   const [selectedFont, setSelectedFont] = useState("sans");
+  const [customPickerColor, setCustomPickerColor] = useState("#E8DCC3");
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -172,8 +173,8 @@ export default function App() {
       ? {
           label: "Custom",
           value: "custom",
-          bg: "#E8DCC3",
-          border: "#C9B99A",
+          bg: customPickerColor,
+          border: customPickerColor,
         }
       : (POUCH_COLORS.find((c) => c.value === selectedColor) ??
         POUCH_COLORS[0]);
@@ -667,6 +668,29 @@ export default function App() {
                   <p className="mt-2 text-xs text-gray-400">
                     Selected: {currentColor.label}
                   </p>
+
+                  {/* Color Picker - shown when Custom is selected */}
+                  {selectedColor === "custom" && (
+                    <div className="mt-3 flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-jute-beige">
+                      <label
+                        htmlFor="color-picker"
+                        className="text-xs font-semibold text-jute-darkGreen whitespace-nowrap"
+                      >
+                        Pick any color:
+                      </label>
+                      <input
+                        id="color-picker"
+                        type="color"
+                        value={customPickerColor}
+                        onChange={(e) => setCustomPickerColor(e.target.value)}
+                        className="w-10 h-10 rounded-lg cursor-pointer border-2 border-jute-beige p-0.5 bg-white"
+                        title="Choose custom color"
+                      />
+                      <span className="text-xs font-mono text-gray-500 uppercase">
+                        {customPickerColor}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Name Printing */}
