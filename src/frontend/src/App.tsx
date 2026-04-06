@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, ChevronDown, Leaf, Mail, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
@@ -162,6 +162,36 @@ export default function App() {
   const [customName, setCustomName] = useState("");
   const [selectedFont, setSelectedFont] = useState("sans");
   const [customPickerColor, setCustomPickerColor] = useState("#E8DCC3");
+  const [activeSection, setActiveSection] = useState("home");
+  const sectionIds = [
+    "home",
+    "about",
+    "product",
+    "customization",
+    "pricing",
+    "impact",
+    "contact",
+  ];
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+    );
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      if (el) observerRef.current.observe(el);
+    }
+    return () => observerRef.current?.disconnect();
+  }, []);
+
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -213,7 +243,11 @@ export default function App() {
                   key={link.href}
                   href={link.href}
                   data-ocid={`nav.${link.label.toLowerCase()}.link`}
-                  className="text-sm font-medium text-gray-700 hover:text-jute-darkGreen transition-colors"
+                  className={`text-sm font-medium transition-colors relative pb-0.5 ${
+                    activeSection === link.href.replace("#", "")
+                      ? "text-jute-darkGreen font-bold after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-jute-darkGreen after:rounded-full"
+                      : "text-gray-700 hover:text-jute-darkGreen"
+                  }`}
                 >
                   {link.label}
                 </a>
@@ -262,7 +296,11 @@ export default function App() {
                   <a
                     key={link.href}
                     href={link.href}
-                    className="py-2 px-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-jute-beige/50 hover:text-jute-darkGreen transition-colors"
+                    className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                      activeSection === link.href.replace("#", "")
+                        ? "bg-jute-beige text-jute-darkGreen font-bold"
+                        : "text-gray-700 hover:bg-jute-beige/50 hover:text-jute-darkGreen"
+                    }`}
                     onClick={() => setMenuOpen(false)}
                   >
                     {link.label}
